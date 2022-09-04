@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    padding: 5%;
+    line-height: 20px;
+    position: relative;
+}
+
+.main {
+    border: 1px solid #000;
+    padding: 15px;
+    border-radius: 5px;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    
+}
+
+input {
+    width: 150px;
+}
+
+.prompt {
+    border: 1px solid #00FFFF;
+    border-radius: 5%;
+    background-color: #E6E6FA;
+    box-shadow: 5px 5px 15px;
+    width: 80px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    opacity: 80%;
+    position: absolute;
+    
+}
