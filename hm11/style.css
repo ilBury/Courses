@@ -1,0 +1,200 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Maven Pro', sans-serif;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    width: 40%;
+    max-width: 500px;
+    min-width: 300px;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    margin-top: 10%;
+    border: 1px solid #000;
+    border-radius: 10px;
+}
+
+.contacts {
+    overflow-x: auto;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+img {
+    width: 20px;
+    height: 20px;
+    padding: 5px 5px 0 5px;
+}
+
+.search {
+    
+    background-color: Gainsboro;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.searchText {   
+    margin: 10px;
+    padding: 5px;
+    width: 100%;
+    height: 25px;
+    border-radius: 15px;
+    text-align: center;
+    border: none;
+}
+
+.contact__item {
+    margin: 15px;
+}
+
+.contact__title {
+    background-color: Gainsboro; 
+    
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.contact__item.active .contact__title {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.contact__content {
+    border: 1px solid Gainsboro;
+    padding: 10px;
+    display: none;
+}
+
+.contact__item.active .contact__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.contact__item.active .contact__content .contact__content--all {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.addContact {
+    width: 40%;
+    max-width: 500px;
+    min-width: 300px;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #000;
+    border-radius: 10px;
+    position: absolute;
+    background-color: #A9A9A9;
+    margin-top: 10%;
+}
+
+.disable {
+    overflow: hidden;
+    display: none;
+}
+
+.addContact > .title {
+    display: flex;
+    justify-content: center;
+}
+
+.entriesField {
+    height: 60%;
+    width: 80%;
+    margin: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+
+}
+
+.inputData {
+    width: 100%;
+    
+}
+
+.inputData > input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #000;
+    border-color: #DCDCDC;
+    
+    padding: 10px;
+    outline: none;
+    background-color: #A9A9A9;
+}
+
+input::placeholder {
+    color: #2F4F4F;
+}
+
+.save {
+    text-align: center;
+}
+
+.contact__content--btns {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact__content--edit {
+    background-image: url("https://www.svgrepo.com/show/25801/edit.svg") ;
+    padding: 15px;
+    border: none;
+    box-shadow: 0px 0px 2px;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 4px;
+    background-color: #87CEFA;
+    color: white;
+    cursor: pointer;
+}
+
+.contact__content--delete {
+    background-image: url("https://cdn-icons-png.flaticon.com/512/1214/1214428.png") ;
+    padding: 15px;
+    border: none;
+    box-shadow: 0px 0px 2px;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 4px;
+    background-color: #DC143C;
+    color: white;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.saveEdit {  
+    background-image: url("https://www.svgrepo.com/show/114760/save.svg");
+    background-color: #ADFF2F;
+}
