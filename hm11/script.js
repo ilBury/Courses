@@ -37,7 +37,9 @@ class Contacts {
     }
 
     remove(id) {
-        this.#data.splice(id, 1);
+        
+        id <= 0 ? this.#data.splice(0, 1) : this.#data.splice(id, 1)
+        
     }
 
     get() {
@@ -52,7 +54,7 @@ class ContactsApp extends Contacts {
         super();       
     }
 
-    #createContact(contact) {
+    createContact(contact) {
         let parent = document.querySelector('.contacts');
 
         this.app = document.createElement('div');
@@ -61,7 +63,7 @@ class ContactsApp extends Contacts {
 
         this.title = document.createElement('div');
         this.title.classList.add('contact__title');
-        this.title.innerHTML = contact.data.name;
+        this.title.innerHTML = contact.name;
 
         this.content = document.createElement('div');
         this.content.classList.add('contact__content');
@@ -71,15 +73,15 @@ class ContactsApp extends Contacts {
         
         this.spanEmail = document.createElement('span');
         this.spanEmail.classList.add('contact__content--email');
-        this.spanEmail.innerHTML = "email: <a>" + contact.data.email + "</a>";
+        this.spanEmail.innerHTML = "email: <a>" + contact.email + "</a>";
 
         this.spanAddress = document.createElement('span');
         this.spanAddress.classList.add('contact__content--address');
-        this.spanAddress.innerHTML = "address: <a>" + contact.data.address + "</a>";
+        this.spanAddress.innerHTML = "address: <a>" + contact.address + "</a>";
 
         this.spanPhone = document.createElement('span');
         this.spanPhone.classList.add('contact__content--phone');
-        this.spanPhone.innerHTML = "phone: <a>" + contact.data.phone + "</a>";
+        this.spanPhone.innerHTML = "phone: <a>" + contact.phone + "</a>";
 
         this.buttonDiv = document.createElement('div');
         this.buttonDiv.classList.add('contact__content--btns');
@@ -111,13 +113,12 @@ class ContactsApp extends Contacts {
         if(!inputAddress.firstChild.value || !inputEmail.firstChild.value || !inputPhone.firstChild.value || !inputName.firstChild.value) return;
 
         let contact = new User({id: 0, name: inputName.firstChild.value, email: inputEmail.firstChild.value, address: inputAddress.firstChild.value, phone: inputPhone.firstChild.value});
+        contact.data.id = localStorage.length;
         
-        this.add(contact.data);
-        let a = this.get();
-        contact.data.id = a.length;
-        super.edit(contact.data.id - 1, contact.data);
-        
-        this.#createContact(contact);
+        this.storage = [contact.data, localStorage.length];
+        this.add(JSON.parse(localStorage.getItem(localStorage.length - 1)));
+        this.createContact(contact.data);
+
     }
 
     accordeon(event) {
@@ -143,14 +144,19 @@ class ContactsApp extends Contacts {
             this.phone = event.target.parentNode.previousElementSibling.querySelector('.contact__content--phone').childNodes[1];    
             this.phone.outerHTML = `<input class="inputElement" id="inPhone" type="text" value="${this.phone.innerHTML}">`;
 
-            this.title = event.target.closest('.contact__content').previousElementSibling;    
+            this.title = event.target.closest('.contact__content').previousElementSibling;  
             let tempTitle = this.title.innerHTML;
             this.title.innerHTML = `<input class="inputElement" id="inTitle" type="text" value="${tempTitle}">`;
             
             let allField = document.body.querySelectorAll('.inputElement');
-            let tempId = this.get();
-            let tempObj = {id: tempId.length, name: tempTitle, email: this.email.innerHTML, address: this.address.innerHTML, phone: this.phone.innerHTML};
-            
+            let tempArr = this.get();
+
+            let tempObj = {id: 0, name: tempTitle, email: this.email.innerHTML, address: this.address.innerHTML, phone: this.phone.innerHTML};
+
+            for(let i = 0; i < tempArr.length; i++) {
+                if(tempArr[i].data.phone == this.phone.innerHTML) tempObj.id = tempArr[i].data.id 
+            }
+            console.log(tempObj);
             allField.forEach((item) => {
                 item.addEventListener('change', () => {
                     switch(item.id) {
@@ -159,11 +165,11 @@ class ContactsApp extends Contacts {
                         case 'inPhone': tempObj.phone = item.value; break;
                         case 'inTitle': tempObj.name = item.value; break;    
                     }   
-                    super.edit(tempId.length - 1, tempObj);
-                    this.get();
+                    localStorage.setItem(tempObj.id, JSON.stringify(tempObj));
+                    super.edit(tempObj.id, tempObj);
                 });
             });
-            
+    
             this.button.classList.add('saveEdit');
         }else {
             
@@ -178,35 +184,68 @@ class ContactsApp extends Contacts {
 
             this.title = event.target.closest('.contact__content').previousElementSibling.firstChild;    
             this.title.outerHTML = `${this.title.value}`
-        
+
             this.button.classList.remove('saveEdit');
+            
         }
     }
 
-    onRemove(event) {
+    /* 
+    Так же добавить очищение строк в addContact после создания нового контакта + кнопка save
+    Сделать поисковик*/
+    onRemove(event) { //вообще говно код?
         let viewData = this.get();
         let item = event.target.closest('.contact__item');
-        let checkFlag = false;
-        for(let i = 0; i < viewData.length; i++) {
-            if(viewData[i].data.name == item.querySelector('.contact__title').innerHTML && !checkFlag) {
-                this.remove(viewData[i].data.id - 1);
+        let checkDataFlag = false;
+        for(let i = 0, j = 0; i < viewData.length; j++, i++) {
+            if(viewData[i].data.name == item.querySelector('.contact__title').innerHTML && !checkDataFlag) {
+                localStorage.removeItem(JSON.stringify(j));
+                this.remove(viewData[i].data.id); 
                 item.remove();
-                checkFlag = true;
-                if(i == 0 || i == viewData.length) break;
+                checkDataFlag = true;
+                if(i == viewData.length) continue;
+                if(i == 0){j--, i--; continue;}
                 viewData[i].data.id--;
-                super.edit(viewData[i].data.id - 1, viewData[i].data);
-            }else if(checkFlag) {
+                this.storage = [viewData[i].data, JSON.stringify(j)];
+                localStorage.removeItem(JSON.stringify(++j)); j--;
+                super.edit(viewData[i].data.id, viewData[i].data);
+            }else if(checkDataFlag) {
+                if(j != 0) localStorage.removeItem(JSON.stringify(j));
                 viewData[i].data.id--;
-                super.edit(viewData[i].data.id - 1, viewData[i].data);
+                this.storage = [viewData[i].data, JSON.stringify(j)];
+                if(i == viewData.length - 1) localStorage.removeItem(JSON.stringify(++j));
+                super.edit(viewData[i].data.id, viewData[i].data);
             } 
         }
     }
+
+    get storage() {
+        let allItems = [];
+        
+        for(let item = 0; item < localStorage.length; item++) {
+            allItems[item] = JSON.parse(localStorage.getItem(item)); 
+        }
+     
+        return allItems;
+    }
+
+    set storage(item) {
+        return localStorage.setItem(item[1], JSON.stringify(item[0]));
+    }
 }
 
-    
+/* localStorage.clear(); */
 /* Main */
 /* Search didn`t do */
 let contactsApp = new ContactsApp();
+
+if(localStorage.length > 0) {
+    for(let i = 0; i < localStorage.length; i++) {
+        contactsApp.add(JSON.parse(localStorage.getItem(i)));
+        contactsApp.createContact(JSON.parse(localStorage.getItem(i)));
+    }
+}
+
 
 let allContacts = this.document.querySelector('.contacts');
 
@@ -218,6 +257,7 @@ allContacts.addEventListener('click', function(event) {
     } else if(event.target.classList.contains('contact__content--delete')){
         contactsApp.onRemove(event);
     }else return;
+    document.cookie = 'storageExpiration=nothing; max-age=60';
 });
 
 let addContact = this.document.querySelector('.plus');
@@ -229,9 +269,24 @@ addContact.addEventListener('click', function() {
 let save = this.document.querySelector('.save');
 save.addEventListener('click', function(event) {
     contactsApp.saveContact();  
-    contactCard.classList.add('disable'); 
+    contactCard.classList.add('disable');
+    document.cookie = 'storageExpiration=nothing; max-age=60'; 
 });
 
+
     
+document.addEventListener('DOMContentLoaded', function() {
+    function getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+          "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    if(!getCookie('storageExpiration')) {
+        localStorage.clear();
+    }
+
+});
 
 
